@@ -23,7 +23,21 @@ class IncludeHtml extends HTMLElement {
    * Refreshes the element's content. Does not support remote script execution.
    */
   async refresh() {
-    const sourceUrl = this.getAttribute("src");
+    const host = window.location.host;
+    let tier = "prod";
+    if (host.includes("-dev.") || host.startsWith("localhost:")) {
+      tier = "dev";
+    } else if (host.includes("-qa.")) {
+      tier = "qa"
+    } else if (host.includes("-stage.")) {
+      tier = "stage"
+    } else {
+      tier = "prod";
+    }
+    let sourceUrl = this.getAttribute("src");
+    if (tier === "stage" || tier === "prod") {
+      sourceUrl = sourceUrl.replace("-test.html", ".html");
+    }
     const templateData = this.parseJson(this.getAttribute("data"));
     const response = await fetch(sourceUrl, { cache: "no-store" });
     const html = response.ok ? await response.text() : "";
