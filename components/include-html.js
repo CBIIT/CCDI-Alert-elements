@@ -23,22 +23,26 @@ class IncludeHtml extends HTMLElement {
    * Refreshes the element's content. Does not support remote script execution.
    */
   async refresh() {
-    const host = window.location.host;
-    let tier = "prod";
-    if (host.includes("-dev.") || host.startsWith("localhost:")) {
-      tier = "dev";
-    } else if (host.includes("-qa.")) {
-      tier = "qa"
-    } else if (host.includes("-stage.")) {
-      tier = "stage"
-    } else {
-      tier = "prod";
-    }
-    let sourceUrl = this.getAttribute("src");
-    if (tier === "stage" || tier === "prod") {
-      sourceUrl = sourceUrl.replace("-test.html", ".html");
-    }
     const templateData = this.parseJson(this.getAttribute("data"));
+    if (templateData["banner_width"] == undefined) {
+      templateData["banner_width"] = "1024px";
+    }
+    if (templateData["lower_tier_identifier"] == undefined) {
+      templateData["lower_tier_identifier"] = ["-dev.", "-qa."]
+    }
+    const lower_tier_identifier = templateData["lower_tier_identifier"];
+    const host = window.location.host;
+    let lower_tier = false;
+    for (let i = 0; i< lower_tier_identifier.length; i++) {
+      if (host.includes(lower_tier_identifier[i])) {
+        lower_tier = true;
+        break;
+      }
+    };
+    let sourceUrl = this.getAttribute("src");
+    if (lower_tier) {
+      sourceUrl = sourceUrl.replace(".html", "-test.html");
+    }
     const response = await fetch(sourceUrl, { cache: "no-store" });
     const html = response.ok ? await response.text() : "";
     const enabled = this.getConfig(html)?.ENABLED?.toUpperCase() ?? "TRUE";
