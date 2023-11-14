@@ -1,4 +1,4 @@
-# nci-softwaresolutions-elements
+# ccdi-alert-elements
 
 This repository demonstrates a pattern for efficiently distributing alerts across websites. A centralized HTML snippet, loaded by a web component, is rendered in the header of each application. This approach enables applications to display up-to-date alerts, such as official shutdown notices, without requiring code changes. Note that the snippet endpoint can be dynamically rendered (eg: by PHP), which may be useful for customizing the snippet depending on request context.
 
@@ -16,40 +16,17 @@ To disable the snippet, use: ```<!-- ENABLED=FALSE -->```
 <head>
   ...
   <!-- Import web component -->
-  <script src="https://cbiit.github.io/nci-softwaresolutions-elements/components/include-html.js"></script>
+  <script src="https://cbiit.github.io/ccdi-alert-elements/components/include-html.js"></script>
 </head>
 
 <body>
   <header>
     <!-- Set component's src attribute to url of html snippet -->
-    <include-html src="https://cbiit.github.io/nci-softwaresolutions-elements/banners/government-shutdown-test.html"></include-html>
-    ...
+    <include-html src="https://cbiit.github.io/ccdi-alert-elements/banners/government-shutdown.html" data='{"banner_width": "1334px", "lower_tier_identifier": ["localhost:", "-dev.", "-dev2.", "-qa.", "-qa2."]}'></include-html>
   </header>
   ...
 </body>
 ```
-
-### Example: Refreshing Snippets Automatically
-This can be used for high-priority alerts which need to be displayed/updated immediately, without requiring a page reload.
-```html
-<head>
-  ...
-  <!-- Import web component -->
-  <script src="https://cbiit.github.io/nci-softwaresolutions-elements/components/include-html.js"></script>
-</head>
-
-<body>
-  <header>
-    <!-- Set component's src attribute to url of html snippet -->
-    <include-html id="governmentShutdownAlert" src="https://cbiit.github.io/nci-softwaresolutions-elements/banners/government-shutdown-test.html"></include-html>
-    ...
-  </header>
-  ...
-  <!-- Refresh the component every 30 seconds -->
-  <script>setInterval(() => window.governmentShutdownAlert.refresh(), 30000)</script>
-</body>
-```
-
 
 ### Example: HTML Snippet ([banners/government-shutdown-test.html](https://github.com/CBIIT/nci-softwaresolutions-elements/blob/main/banners/government-shutdown-test.html))
 ```html
